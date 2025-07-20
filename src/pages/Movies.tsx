@@ -50,7 +50,7 @@ const Movies = () => {
 
   const filteredMovies = movies.filter(movie => {
     const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesYear = !selectedYear || movie.release_date.startsWith(selectedYear);
+    const matchesYear = selectedYear === 'all-years' || !selectedYear || movie.release_date.startsWith(selectedYear);
     return matchesSearch && matchesYear;
   });
 
@@ -106,7 +106,7 @@ const Movies = () => {
                 </div>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Genres</SelectItem>
+                <SelectItem value="all-genres">All Genres</SelectItem>
                 <SelectItem value="action">Action</SelectItem>
                 <SelectItem value="adventure">Adventure</SelectItem>
                 <SelectItem value="comedy">Comedy</SelectItem>
@@ -122,7 +122,7 @@ const Movies = () => {
                 <SelectValue placeholder="Year" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Years</SelectItem>
+                <SelectItem value="all-years">All Years</SelectItem>
                 {years.map(year => (
                   <SelectItem key={year} value={year.toString()}>
                     {year}

@@ -17,7 +17,6 @@ interface HeroSectionProps {
 }
 
 const HeroSection = ({ movie }: HeroSectionProps) => {
-  console.log('HeroSection rendering with movie:', movie);
   const [imageLoaded, setImageLoaded] = useState(false);
   const navigate = useNavigate();
 

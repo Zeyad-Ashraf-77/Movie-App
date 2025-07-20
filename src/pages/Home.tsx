@@ -18,18 +18,14 @@ const Home = () => {
   const [selectedYear, setSelectedYear] = useState<string>('');
 
   useEffect(() => {
-    console.log('Home component mounting...');
     loadMovies();
     loadFavorites();
   }, []);
 
   const loadMovies = async () => {
     try {
-      console.log('Loading movies...');
       setLoading(true);
-      // Use mock data for now - replace with actual API when you have the key
       const data = await getMockTrendingMovies();
-      console.log('Movies loaded:', data.results.length);
       setMovies(data.results);
       if (data.results.length > 0) {
         setFeaturedMovie(data.results[0]);
@@ -59,19 +55,15 @@ const Home = () => {
 
   const filteredMovies = movies.filter(movie => {
     const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesYear = !selectedYear || movie.release_date.startsWith(selectedYear);
+    const matchesYear = selectedYear === 'all-years' || !selectedYear || movie.release_date.startsWith(selectedYear);
     return matchesSearch && matchesYear;
   });
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 20 }, (_, i) => currentYear - i);
 
-  console.log('Rendering Home component, loading:', loading, 'movies:', movies.length);
-
   return (
-    <div className="min-h-screen bg-background"
-      style={{ backgroundColor: 'hsl(0 0% 5%)' }} // Fallback color
-    >
+    <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <HeroSection movie={featuredMovie} />
 
@@ -100,7 +92,7 @@ const Home = () => {
                 </div>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Genres</SelectItem>
+                <SelectItem value="all-genres">All Genres</SelectItem>
                 <SelectItem value="action">Action</SelectItem>
                 <SelectItem value="comedy">Comedy</SelectItem>
                 <SelectItem value="drama">Drama</SelectItem>
@@ -114,7 +106,7 @@ const Home = () => {
                 <SelectValue placeholder="Year" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Years</SelectItem>
+                <SelectItem value="all-years">All Years</SelectItem>
                 {years.map(year => (
                   <SelectItem key={year} value={year.toString()}>
                     {year}
