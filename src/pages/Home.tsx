@@ -70,7 +70,23 @@ const Home = () => {
       selectedYear === "all-years" ||
       !selectedYear ||
       movie.release_date.startsWith(selectedYear);
-    return matchesSearch && matchesYear;
+
+    // Filter by genre
+    const genreMap: { [key: string]: number[] } = {
+      action: [28],
+      comedy: [35],
+      drama: [18],
+      horror: [27],
+      "sci-fi": [878],
+    };
+
+    const matchesGenre =
+      selectedGenre === "all-genres" ||
+      !selectedGenre ||
+      (genreMap[selectedGenre] &&
+        movie.genre_ids.some((id) => genreMap[selectedGenre].includes(id)));
+
+    return matchesSearch && matchesYear && matchesGenre;
   });
 
   const currentYear = new Date().getFullYear();

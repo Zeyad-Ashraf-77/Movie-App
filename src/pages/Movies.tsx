@@ -51,7 +51,23 @@ const Movies = () => {
   const filteredMovies = movies.filter(movie => {
     const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesYear = selectedYear === 'all-years' || !selectedYear || movie.release_date.startsWith(selectedYear);
-    return matchesSearch && matchesYear;
+    
+    // Filter by genre
+    const genreMap: { [key: string]: number[] } = {
+      'action': [28],
+      'adventure': [12],
+      'comedy': [35],
+      'drama': [18],
+      'horror': [27],
+      'sci-fi': [878],
+      'thriller': [53]
+    };
+    
+    const matchesGenre = selectedGenre === 'all-genres' || 
+      !selectedGenre || 
+      (genreMap[selectedGenre] && movie.genre_ids.some(id => genreMap[selectedGenre].includes(id)));
+    
+    return matchesSearch && matchesYear && matchesGenre;
   });
 
   const sortedMovies = [...filteredMovies].sort((a, b) => {
