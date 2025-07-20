@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Filter, Search as SearchIcon } from "lucide-react";
+import { Search, Search as SearchIcon } from "lucide-react";
 import { searchMovies, Movie } from "@/services/tmdbApi";
 
 const SearchMovies = () => {
@@ -19,7 +19,6 @@ const SearchMovies = () => {
   const [loading, setLoading] = useState(false);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
-  const [selectedGenre, setSelectedGenre] = useState<string>("");
   const [selectedYear, setSelectedYear] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("popularity.desc");
 

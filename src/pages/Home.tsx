@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/select";
 import { Search, Filter } from "lucide-react";
 import {
-  getMockTrendingMovies,
   getPopularMovies,
   Movie,
 } from "@/services/tmdbApi";
