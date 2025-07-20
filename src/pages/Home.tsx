@@ -1,21 +1,30 @@
-import { useState, useEffect } from 'react';
-import HeroSection from '@/components/HeroSection';
-import MovieCard from '@/components/MovieCard';
-import ApiKeyNotice from '@/components/ApiKeyNotice';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Filter } from 'lucide-react';
-import { getMockTrendingMovies, getPopularMovies, Movie } from '@/services/tmdbApi';
+import { useState, useEffect } from "react";
+import HeroSection from "@/components/HeroSection";
+import MovieCard from "@/components/MovieCard";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Search, Filter } from "lucide-react";
+import {
+  getMockTrendingMovies,
+  getPopularMovies,
+  Movie,
+} from "@/services/tmdbApi";
 
 const Home = () => {
   const [featuredMovie, setFeaturedMovie] = useState<Movie | null>(null);
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState<number[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedGenre, setSelectedGenre] = useState<string>('');
-  const [selectedYear, setSelectedYear] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedGenre, setSelectedGenre] = useState<string>("");
+  const [selectedYear, setSelectedYear] = useState<string>("");
 
   useEffect(() => {
     loadMovies();
@@ -25,20 +34,20 @@ const Home = () => {
   const loadMovies = async () => {
     try {
       setLoading(true);
-      const data = await getMockTrendingMovies();
+      const data = await getPopularMovies();
       setMovies(data.results);
       if (data.results.length > 0) {
         setFeaturedMovie(data.results[0]);
       }
     } catch (error) {
-      console.error('Failed to load movies:', error);
+      console.error("Failed to load movies:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const loadFavorites = () => {
-    const savedFavorites = localStorage.getItem('movieFavorites');
+    const savedFavorites = localStorage.getItem("movieFavorites");
     if (savedFavorites) {
       setFavorites(JSON.parse(savedFavorites));
     }
@@ -46,16 +55,21 @@ const Home = () => {
 
   const toggleFavorite = (movieId: number) => {
     const newFavorites = favorites.includes(movieId)
-      ? favorites.filter(id => id !== movieId)
+      ? favorites.filter((id) => id !== movieId)
       : [...favorites, movieId];
-    
+
     setFavorites(newFavorites);
-    localStorage.setItem('movieFavorites', JSON.stringify(newFavorites));
+    localStorage.setItem("movieFavorites", JSON.stringify(newFavorites));
   };
 
-  const filteredMovies = movies.filter(movie => {
-    const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesYear = selectedYear === 'all-years' || !selectedYear || movie.release_date.startsWith(selectedYear);
+  const filteredMovies = movies.filter((movie) => {
+    const matchesSearch = movie.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchesYear =
+      selectedYear === "all-years" ||
+      !selectedYear ||
+      movie.release_date.startsWith(selectedYear);
     return matchesSearch && matchesYear;
   });
 
@@ -70,7 +84,6 @@ const Home = () => {
       {/* Search and Filters */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* API Key Notice */}
-        <ApiKeyNotice />
         <div className="flex flex-col md:flex-row gap-4 mb-8">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
@@ -82,7 +95,7 @@ const Home = () => {
               className="pl-12 bg-movie-card border-border focus:border-primary h-12"
             />
           </div>
-          
+
           <div className="flex gap-4">
             <Select value={selectedGenre} onValueChange={setSelectedGenre}>
               <SelectTrigger className="w-[140px] bg-movie-card border-border h-12">
@@ -107,7 +120,7 @@ const Home = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all-years">All Years</SelectItem>
-                {years.map(year => (
+                {years.map((year) => (
                   <SelectItem key={year} value={year.toString()}>
                     {year}
                   </SelectItem>
@@ -121,9 +134,14 @@ const Home = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-foreground">
-              {searchQuery ? `Search Results for "${searchQuery}"` : 'Popular Movies'}
+              {searchQuery
+                ? `Search Results for "${searchQuery}"`
+                : "Popular Movies"}
             </h2>
-            <Button variant="outline" className="border-border hover:bg-movie-hover">
+            <Button
+              variant="outline"
+              className="border-border hover:bg-movie-hover"
+            >
               View All
             </Button>
           </div>
@@ -131,7 +149,10 @@ const Home = () => {
           {loading ? (
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
               {Array.from({ length: 12 }).map((_, index) => (
-                <div key={index} className="aspect-[2/3] bg-movie-card animate-pulse rounded-lg"></div>
+                <div
+                  key={index}
+                  className="aspect-[2/3] bg-movie-card animate-pulse rounded-lg"
+                ></div>
               ))}
             </div>
           ) : (
@@ -149,7 +170,9 @@ const Home = () => {
 
           {!loading && filteredMovies.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-muted-foreground text-lg">No movies found matching your criteria.</p>
+              <p className="text-muted-foreground text-lg">
+                No movies found matching your criteria.
+              </p>
             </div>
           )}
         </div>

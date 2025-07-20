@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import MovieCard from '@/components/MovieCard';
-import { Heart } from 'lucide-react';
-import { Movie } from '@/services/tmdbApi';
+import { useState, useEffect } from "react";
+import MovieCard from "@/components/MovieCard";
+import { Heart } from "lucide-react";
+import { Movie, getMovieDetails } from "@/services/tmdbApi";
 
 const Favorites = () => {
   const [favorites, setFavorites] = useState<number[]>([]);
@@ -12,42 +12,29 @@ const Favorites = () => {
     loadFavorites();
   }, []);
 
-  const loadFavorites = () => {
-    const savedFavorites = localStorage.getItem('movieFavorites');
+    const loadFavorites = async () => {
+    const savedFavorites = localStorage.getItem("movieFavorites");
     if (savedFavorites) {
       const favoriteIds = JSON.parse(savedFavorites);
       setFavorites(favoriteIds);
       
-      // Mock favorite movies - in real app, fetch from API
-      const mockFavoriteMovies: Movie[] = [
-        {
-          id: 1,
-          title: "Avengers: Endgame",
-          overview: "After the devastating events of Avengers: Infinity War...",
-          poster_path: "/or06FN3Dka5tukK1e9sl16pB3iy.jpg",
-          backdrop_path: "/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg",
-          release_date: "2019-04-24",
-          vote_average: 8.3,
-          genre_ids: [12, 878, 28],
-          adult: false,
-          original_language: "en",
-          original_title: "Avengers: Endgame",
-          popularity: 84.482,
-          video: false,
-          vote_count: 20000
-        }
-      ].filter(movie => favoriteIds.includes(movie.id));
-      
-      setFavoriteMovies(mockFavoriteMovies);
+      try {
+        // Fetch real movie data for each favorite
+        const moviePromises = favoriteIds.map(id => getMovieDetails(id));
+        const moviesData = await Promise.all(moviePromises);
+        setFavoriteMovies(moviesData);
+      } catch (error) {
+        console.error('Failed to load favorite movies:', error);
+      }
     }
     setLoading(false);
   };
 
   const removeFavorite = (movieId: number) => {
-    const newFavorites = favorites.filter(id => id !== movieId);
+    const newFavorites = favorites.filter((id) => id !== movieId);
     setFavorites(newFavorites);
-    setFavoriteMovies(favoriteMovies.filter(movie => movie.id !== movieId));
-    localStorage.setItem('movieFavorites', JSON.stringify(newFavorites));
+    setFavoriteMovies(favoriteMovies.filter((movie) => movie.id !== movieId));
+    localStorage.setItem("movieFavorites", JSON.stringify(newFavorites));
   };
 
   if (loading) {
@@ -72,7 +59,9 @@ const Favorites = () => {
         {favoriteMovies.length === 0 ? (
           <div className="text-center py-16">
             <Heart className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-2xl font-semibold text-foreground mb-2">No favorites yet</h2>
+            <h2 className="text-2xl font-semibold text-foreground mb-2">
+              No favorites yet
+            </h2>
             <p className="text-muted-foreground mb-6">
               Start adding movies to your favorites to see them here!
             </p>
