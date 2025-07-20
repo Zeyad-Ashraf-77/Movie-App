@@ -18,15 +18,18 @@ const Home = () => {
   const [selectedYear, setSelectedYear] = useState<string>('');
 
   useEffect(() => {
+    console.log('Home component mounting...');
     loadMovies();
     loadFavorites();
   }, []);
 
   const loadMovies = async () => {
     try {
+      console.log('Loading movies...');
       setLoading(true);
       // Use mock data for now - replace with actual API when you have the key
       const data = await getMockTrendingMovies();
+      console.log('Movies loaded:', data.results.length);
       setMovies(data.results);
       if (data.results.length > 0) {
         setFeaturedMovie(data.results[0]);
@@ -63,8 +66,12 @@ const Home = () => {
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 20 }, (_, i) => currentYear - i);
 
+  console.log('Rendering Home component, loading:', loading, 'movies:', movies.length);
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background"
+      style={{ backgroundColor: 'hsl(0 0% 5%)' }} // Fallback color
+    >
       {/* Hero Section */}
       <HeroSection movie={featuredMovie} />
 
